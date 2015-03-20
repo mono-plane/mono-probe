@@ -21,9 +21,9 @@ http://github.com/mono-plane/mono-storage
 
 Build the top level project:
 
-----
+`
 $ mvn clean install
-----
+`
 
 This will also create a probe-module.zip, that can be installed on Wildfly:
 
@@ -37,19 +37,19 @@ This will add an additional module that contains the probe extension and subsyst
 
 The following contents will be installed when you unpack the #probe-module.zip:
 
-....
+```
 modules/system/layers/base/org/wildfly/extension/monoplane/probe/main/module.xml (1)
 modules/system/layers/base/org/org/wildfly/extension/monoplane/probe/main/*.jar (2)
 standalone/configuration/standalone-probe.xml (3)
 domain/configuration/porbe-domain.xml (4)
 domain/configuration/probe-host.xml (5)`
-....
+```
 
-. The module descriptor
-. Required libraries to run the probe on Wildfly
-. An example configuration for standalone servers
-. An example configuration for managed domains
-. An example host configuration
+1. The module descriptor
+2. Required libraries to run the probe on Wildfly
+3. An example configuration for standalone servers
+4. An example configuration for managed domains
+5. An example host configuration
 
 ## Server Configuration Profiles
 
