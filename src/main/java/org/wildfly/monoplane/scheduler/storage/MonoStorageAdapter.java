@@ -3,7 +3,11 @@ package org.wildfly.monoplane.scheduler.storage;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import org.hawkular.metrics.core.api.MetricId;
 import org.hawkular.metrics.core.api.NumericData;
 import org.hawkular.metrics.core.api.NumericMetric;
@@ -27,7 +31,6 @@ public class MonoStorageAdapter implements StorageAdapter {
     private Configuration config;
     private Diagnostics diagnostics;
     private Session session;
-    private MetricsServiceCassandra metrics;
     private DataAccessImpl dataAccess;
 
 
@@ -102,10 +105,24 @@ public class MonoStorageAdapter implements StorageAdapter {
             }
 
             // TODO clarification: use service or dao ?
-            dataAccess.insertData(metric, MetricsServiceCassandra.DEFAULT_TTL);
+            ResultSetFuture future = dataAccess.insertData(metric, MetricsServiceCassandra.DEFAULT_TTL);
+            Futures.addCallback(future, new FutureCallback<ResultSet>() {
+                @Override
+                public void onSuccess(ResultSet result) {
+
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    ProbeLogger.LOGGER.error("Failed to persist data", t);
+                    diagnostics.getStorageErrorRate().mark(1);
+                }
+            });
+
+
 
         } catch (Throwable t) {
-            t.printStackTrace();
+            ProbeLogger.LOGGER.error("Failed to persist data", t);
             diagnostics.getStorageErrorRate().mark(1);
         }
 
