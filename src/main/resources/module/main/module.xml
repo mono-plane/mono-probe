@@ -15,6 +15,11 @@
         <resource-root path="cassandra-driver-core-2.1.5.jar"/>
         <resource-root path="netty-3.9.0.Final.jar"/>
         <resource-root path="metrics-core-3.0.2.jar"/>
+
+        <resource-root path="hawkular-metrics-core-impl-0.3.1-SNAPSHOT.jar"/>
+        <resource-root path="hawkular-metrics-core-api-0.3.1-SNAPSHOT.jar"/>
+        <resource-root path="joda-time-2.3.jar"/>
+        <resource-root path="commons-math3-3.4.1.jar"/>
     </resources>
 
     <dependencies>

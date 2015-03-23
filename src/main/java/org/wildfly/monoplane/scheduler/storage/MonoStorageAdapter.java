@@ -4,12 +4,16 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
+import org.hawkular.metrics.core.api.MetricId;
+import org.hawkular.metrics.core.api.NumericData;
+import org.hawkular.metrics.core.api.NumericMetric;
+import org.hawkular.metrics.core.impl.cassandra.DataAccessImpl;
+import org.hawkular.metrics.core.impl.cassandra.MetricsServiceCassandra;
 import org.wildfly.monoplane.probe.extension.ProbeLogger;
 import org.wildfly.monoplane.probe.schema.SchemaManager;
 import org.wildfly.monoplane.scheduler.config.Configuration;
 import org.wildfly.monoplane.scheduler.diagnose.Diagnostics;
 
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -18,10 +22,18 @@ import java.util.Set;
  */
 public class MonoStorageAdapter implements StorageAdapter {
 
+    private final DefaultKeyResolution keyResolution;
     private Cluster cluster;
     private Configuration config;
     private Diagnostics diagnostics;
     private Session session;
+    private MetricsServiceCassandra metrics;
+    private DataAccessImpl dataAccess;
+
+
+    public MonoStorageAdapter() {
+        this.keyResolution = new DefaultKeyResolution();
+    }
 
     @Override
     public void start() {
@@ -60,6 +72,8 @@ public class MonoStorageAdapter implements StorageAdapter {
         }
 
         this.session = cluster.connect(config.getStorageDBName());
+
+        dataAccess = new DataAccessImpl(session);
     }
 
     @Override
@@ -71,17 +85,24 @@ public class MonoStorageAdapter implements StorageAdapter {
         if(cluster!=null)
             cluster.close();
 
-
     }
 
     @Override
     public void store(Set<DataPoint> datapoints) {
 
         try {
-            // TODO
 
-            /*session.execute("CREATE KEYSPACE IF NOT EXISTS simplex WITH replication " +
-                  "= {'class':'SimpleStrategy', 'replication_factor':3};");*/
+            // TODO: improve API to retrieve keys
+            String key = keyResolution.resolve(datapoints.iterator().next().getTask());
+
+            NumericMetric metric = new NumericMetric(new MetricId(key));
+
+            for (DataPoint datapoint : datapoints) {
+                metric.addData(new NumericData(datapoint.getTimestamp(), datapoint.getValue()));
+            }
+
+            // TODO clarification: use service or dao ?
+            dataAccess.insertData(metric, MetricsServiceCassandra.DEFAULT_TTL);
 
         } catch (Throwable t) {
             t.printStackTrace();

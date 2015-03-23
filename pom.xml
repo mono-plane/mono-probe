@@ -309,6 +309,19 @@
         </dependency>
 
         <dependency>
+            <groupId>org.hawkular.metrics</groupId>
+            <artifactId>hawkular-metrics-core-impl</artifactId>
+            <version>0.3.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.wordnik</groupId>
+                    <artifactId>swagger-core_2.10</artifactId>
+                </exclusion>
+
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>org.influxdb</groupId>
             <artifactId>influxdb-java</artifactId>
             <version>1.2</version>

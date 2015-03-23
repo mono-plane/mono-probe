@@ -58,6 +58,7 @@
         <dependencySet>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <useTransitiveFiltering>true</useTransitiveFiltering>
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
             <outputDirectory>modules/system/layers/base/org/wildfly/extension/monoplane/probe/main</outputDirectory>
             <includes>
                 <include>io.dropwizard.metrics:metrics-core</include>
@@ -79,6 +80,12 @@
                 <include>com.datastax.cassandra:cassandra-driver-core</include>
                 <include>io.netty:netty</include>
                 <include>com.codahale.metrics</include>
+
+                <!-- hawkular metrics -->
+                <include>org.hawkular.metrics:hawkular-metrics-core-impl</include>
+                <include>org.hawkular.metrics:hawkular-metrics-core-api</include>
+                <include>org.apache.commons:commons-math3</include>
+                <include>joda-time:joda-time</include>
             </includes>
         </dependencySet>
 
