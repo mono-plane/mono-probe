@@ -6,6 +6,9 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.Timer;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Host;
+import com.datastax.driver.core.Metadata;
 import org.wildfly.monoplane.scheduler.config.Address;
 import org.wildfly.monoplane.scheduler.config.Configuration;
 import org.wildfly.monoplane.scheduler.config.ResourceRef;
@@ -17,6 +20,7 @@ import org.wildfly.monoplane.scheduler.polling.Scheduler;
 import org.wildfly.monoplane.scheduler.polling.Task;
 import org.wildfly.monoplane.scheduler.storage.BufferedStorageDispatcher;
 import org.wildfly.monoplane.scheduler.storage.InfluxStorageAdapter;
+import org.wildfly.monoplane.scheduler.storage.MonoStorageAdapter;
 import org.wildfly.monoplane.scheduler.storage.RHQStorageAdapter;
 import org.wildfly.monoplane.scheduler.storage.StorageAdapter;
 
@@ -46,15 +50,15 @@ public class Service implements TopologyChangeListener {
     private BufferedStorageDispatcher completionHandler;
 
     /**
-        *
-        * @param configuration
-        */
+     *
+     * @param configuration
+     */
     public Service(Configuration configuration) {
         this(configuration, new ClientFactoryImpl(
-                configuration.getHost(),
-                configuration.getPort(),
-                configuration.getUsername(),
-                configuration.getPassword())
+                        configuration.getHost(),
+                        configuration.getPort(),
+                        configuration.getUsername(),
+                        configuration.getPassword())
         );
     }
 
@@ -71,7 +75,11 @@ public class Service implements TopologyChangeListener {
 
         this.diagnostics = createDiagnostics(metrics);
 
-        if(Configuration.Storage.RHQ == configuration.getStorageAdapter())
+        if(Configuration.Storage.MONO == configuration.getStorageAdapter())
+        {
+            this.storageAdapter = new MonoStorageAdapter();
+        }
+        else if(Configuration.Storage.RHQ == configuration.getStorageAdapter())
         {
             this.storageAdapter = new RHQStorageAdapter();
         }
@@ -145,6 +153,8 @@ public class Service implements TopologyChangeListener {
 
     public void start(String host, String server) {
 
+        this.storageAdapter.start();
+
         // turn ResourceRef into Tasks (relative to absolute addresses ...)
         List<Task> tasks = createTasks(host, server, configuration.getResourceRefs());
         this.completionHandler.start();
@@ -170,10 +180,12 @@ public class Service implements TopologyChangeListener {
     }
 
     public void stop() {
+
         this.completionHandler.shutdown();
         this.scheduler.shutdown();
         this.reporter.stop();
         this.reporter.report();
+        this.storageAdapter.stop();
     }
 
     @Override

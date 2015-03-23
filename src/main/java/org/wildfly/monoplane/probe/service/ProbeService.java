@@ -20,7 +20,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jboss.threads.JBossThreadFactory;
-import org.wildfly.monoplane.probe.extension.MonitorLogger;
+import org.wildfly.monoplane.probe.extension.ProbeLogger;
 import org.wildfly.monoplane.scheduler.ModelControllerClientFactory;
 import org.wildfly.monoplane.scheduler.config.Configuration;
 import org.wildfly.monoplane.scheduler.config.ConfigurationInstance;
@@ -41,8 +41,9 @@ import static java.security.AccessController.doPrivileged;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
 
 /**
- * A service that gathers values from the system and sends them to a RHQ Metrics Server
- * @author Heiko W. Rupp
+ * A service that gathers values from the system and sends them to a storage server
+ *
+ * @author Heiko Braun
  */
 public class ProbeService implements Service<ProbeService> {
 
@@ -63,7 +64,7 @@ public class ProbeService implements Service<ProbeService> {
     private final InjectedValue<ServerEnvironment> serverEnvironmentValue = new InjectedValue<>();
     private final InjectedValue<ControlledProcessStateService> processStateValue = new InjectedValue<>();
 
-    public static final ServiceName SERVICE_NAME = ServiceName.JBOSS.append("rhq", "wildfly-monitor");
+    public static final ServiceName SERVICE_NAME = ServiceName.JBOSS.append("monoplane", "probe");
     private PropertyChangeListener serverStateListener;
 
 
@@ -172,9 +173,7 @@ public class ProbeService implements Service<ProbeService> {
     @Override
     public void start(final StartContext startContext) throws StartException {
 
-
         if (this.enabled) {
-
 
             // deferred startup: we have to wait until the server is running before we can monitor the subsystems (parallel service startup)
             ControlledProcessStateService stateService = processStateValue.getValue();
@@ -183,7 +182,7 @@ public class ProbeService implements Service<ProbeService> {
                 public void propertyChange(PropertyChangeEvent evt) {
                     if (ControlledProcessState.State.RUNNING.equals(evt.getNewValue())) {
 
-                        MonitorLogger.LOGGER.infof("Starting monitoring subsystem");
+                        ProbeLogger.LOGGER.infof("Starting probe subsystem");
                         startScheduler(startContext);
                     }
                 }
@@ -197,7 +196,7 @@ public class ProbeService implements Service<ProbeService> {
     private void startScheduler(StartContext startContext) {
 
         final ThreadFactory threadFactory = new JBossThreadFactory(
-                new ThreadGroup("RHQ-Metrics-threads"),
+                new ThreadGroup("Probe-Scheduler-threads"),
                 Boolean.FALSE, null, "%G - %t", null, null,
                 doPrivileged(GetAccessControlContextAction.getInstance()));
 
@@ -244,7 +243,7 @@ public class ProbeService implements Service<ProbeService> {
     @Override
     public void stop(StopContext stopContext) {
 
-        MonitorLogger.LOGGER.infof("Stopping monitoring subsystem");
+        ProbeLogger.LOGGER.infof("Stopping probe subsystem");
 
         // shutdown scheduler
         if(schedulerService!=null)

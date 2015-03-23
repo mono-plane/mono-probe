@@ -70,4 +70,14 @@ public class InfluxStorageAdapter implements StorageAdapter {
         }
 
     }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+
+    }
 }

@@ -80,8 +80,8 @@
         <subsystem xmlns="urn:org.wildfly.monoplane:probe:1.0">
 
             <storage-adapter
-                    name="rhq"
-                    url="http://localhost:8080/rhq-metrics/metrics" db="wildfly"/>
+                    name="mono"
+                    url="cas://127.0.0.1" db="wildfly"/>
 
             <server-monitor name="default" enabled="true" num-threads="2">
 

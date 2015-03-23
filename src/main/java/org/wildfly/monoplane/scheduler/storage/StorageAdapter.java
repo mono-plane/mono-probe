@@ -10,6 +10,10 @@ import java.util.Set;
  * @since 10/10/14
  */
 public interface StorageAdapter {
+
+    void start();
+    void stop();
+
     void store(Set<DataPoint> datapoints);
     void setConfiguration(Configuration config);
     void setDiagnostics(Diagnostics diag);

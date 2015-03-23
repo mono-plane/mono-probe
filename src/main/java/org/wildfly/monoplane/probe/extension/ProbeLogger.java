@@ -14,10 +14,10 @@ import org.jboss.logging.MessageLogger;
  * @author Heiko Braun
  */
 @MessageLogger(projectCode = "<<none>>")
-public interface MonitorLogger extends BasicLogger {
+public interface ProbeLogger extends BasicLogger {
     /**
      * A logger with the category {@code org.wildfly.monoplane.probe}.
      */
-    MonitorLogger LOGGER = Logger.getMessageLogger(MonitorLogger.class, "org.wildfly.monoplane.probe");
+    ProbeLogger LOGGER = Logger.getMessageLogger(ProbeLogger.class, "org.wildfly.monoplane.probe");
 
 }

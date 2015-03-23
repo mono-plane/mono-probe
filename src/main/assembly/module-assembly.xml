@@ -74,6 +74,11 @@
                 <include>commons-logging:commons-logging</include>
                 <include>commons-codec:commons-codec</include>
                 <include>org.rhq.metrics:clients-common</include>
+
+                <!-- the cassandra java driver -->
+                <include>com.datastax.cassandra:cassandra-driver-core</include>
+                <include>io.netty:netty</include>
+                <include>com.codahale.metrics</include>
             </includes>
         </dependencySet>
 

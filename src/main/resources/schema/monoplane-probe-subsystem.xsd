@@ -64,6 +64,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="rhq" />
             <xs:enumeration value="influx" />
+            <xs:enumeration value="mono" />
         </xs:restriction>
     </xs:simpleType>
 
