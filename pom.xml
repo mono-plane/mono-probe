@@ -8,7 +8,7 @@
 
     <groupId>monoplane.io</groupId>
     <artifactId>probe</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
     <name>Probe Subsystem</name>
     <description>Takes the data and pushes it to the storage subsystem.</description>
@@ -93,6 +93,28 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>enforce-java</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>1.8</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
         <pluginManagement>

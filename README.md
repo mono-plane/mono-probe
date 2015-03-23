@@ -66,7 +66,7 @@ The probe-module.zip server profiles for both standalone and domain mode that ca
 
 ## Get In touch
 
-The best way to reach out and discuss the monitor subsystem is the Wildfly mailing list and/or the Chat Room:
+The best way to reach out and discuss the subsystem is the Wildfly mailing list and/or the Chat Room:
 
 - Mailing List: https://lists.jboss.org/mailman/listinfo/wildfly-dev
 - IRC: irc://freenode.org/#wildfly
