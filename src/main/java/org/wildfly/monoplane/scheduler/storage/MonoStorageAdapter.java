@@ -5,9 +5,11 @@ import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import org.wildfly.monoplane.probe.extension.ProbeLogger;
+import org.wildfly.monoplane.probe.schema.SchemaManager;
 import org.wildfly.monoplane.scheduler.config.Configuration;
 import org.wildfly.monoplane.scheduler.diagnose.Diagnostics;
 
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -24,6 +26,7 @@ public class MonoStorageAdapter implements StorageAdapter {
     @Override
     public void start() {
 
+        String keyspace = config.getStorageDBName();
         String storageUrl = config.getStorageUrl();
         String ip = storageUrl.substring(7, storageUrl.length()); // TODO fixme, it assumes 'http://'
 
@@ -44,7 +47,19 @@ public class MonoStorageAdapter implements StorageAdapter {
 
         }
 
-        //this.session = cluster.connect(config.getStorageDBName());
+
+        // force drop/create of schema
+        // TODO: more subtle, configurable settings
+        try {
+            Session sess = cluster.connect();
+            SchemaManager schemaManager = new SchemaManager(sess);
+            schemaManager.dropKeyspace(keyspace);
+            schemaManager.createSchema(keyspace);
+        } catch (Throwable t) {
+            throw new RuntimeException("Failed to initialize schema", t);
+        }
+
+        this.session = cluster.connect(config.getStorageDBName());
     }
 
     @Override
