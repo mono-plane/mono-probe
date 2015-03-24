@@ -83,7 +83,6 @@ CREATE TABLE ${keyspace}.data (
     m_tags map<text, text> static,
     n_value double,
     availability blob,
-    aggregates set<frozen <aggregate_data>>,
     tags map<text, text>,
     PRIMARY KEY ((tenant_id, type, metric, interval, dpart), time)
 )
@@ -112,7 +111,6 @@ CREATE TABLE ${keyspace}.tags (
     interval text,
     time timeuuid,
     n_value double,
-    aggregates set<frozen <aggregate_data>>,
     availability blob,
     PRIMARY KEY ((tenant_id, tname), tvalue, type, metric, interval, time)
 ) WITH compaction = { 'class': 'LeveledCompactionStrategy' };
