@@ -12,6 +12,7 @@
         <resource-root path="okhttp-urlconnection-2.0.0.jar"/>
         <resource-root path="probe.jar"/>
 
+        <!-- the cassandra java driver (Maybe move to a custom module?) -->
         <resource-root path="cassandra-driver-core-2.1.5.jar"/>
         <resource-root path="netty-3.9.0.Final.jar"/>
         <resource-root path="metrics-core-3.0.2.jar"/>
